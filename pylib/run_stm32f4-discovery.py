@@ -35,6 +35,12 @@ def get_target_args(remnant):
         help='Command to invoke GDB',
     )
     parser.add_argument(
+        '--gdb-data-directory',
+        type=str,
+        default='',
+        help='Data directory for GDB',
+    )
+    parser.add_argument(
         '--gdbserver-command',
         type=str,
         default='gdbserver',
@@ -45,6 +51,24 @@ def get_target_args(remnant):
         type=int,
         default=1,
         help='Processor clock speed in MHz'
+    )
+    parser.add_argument(
+        '--benchmark-iters',
+        type=int,
+        default=10,
+        help='Number of iterations to run the benchmark'
+    )
+    parser.add_argument(
+        '--output-filename',
+        type=str,
+        default='',
+        help='Filename to store timing results to, in a JSON format'
+    )
+    parser.add_argument(
+        '--output-opts',
+        type=str,
+        default='nothing',
+        help='Extra options to store in the output file'
     )
 
     return parser.parse_args(remnant)
@@ -57,26 +81,22 @@ def build_benchmark_cmd(path, args):
     cpu_mhz = args.cpu_mhz
 
     cmd = [f'{args.gdb_command}']
+    if args.gdb_data_directory:
+        cmd.append(f'--data-directory={args.gdb_data_directory}')
+    if args.output_filename == '':
+        args.output_filename = f'{path.split('/')[-1]}.json'
+    log.info(f'Saving to {args.output_filename}')
     gdb_comms = [
         'set confirm off',
-        'file {0}',
+        f'file {path}',
         'target extended-remote :3333',
         'load',
-        'delete breakpoints',
-        'break start_trigger',
-        'break stop_trigger',
-        'break AtExit',
-        'continue',
-        'print /u *0xe0001004',
-        'continue',
-        'print /u *0xe0001004',
-        'continue',
-        'print /u $r0',
+        f'time-function {args.benchmark_iters} {args.output_filename} {args.output_extra}',
         'quit',
     ]
 
     for arg in gdb_comms:
-        cmd.extend(['-ex', arg.format(path)])
+        cmd.extend(['-ex', arg])
 
     return cmd
 
@@ -118,9 +138,7 @@ def run_benchmark(bench, path, args):
     try:
         res = subprocess.run(
             arglist,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=50,
+            capture_output=True,
         )
     except subprocess.TimeoutExpired:
         log.warning(f'Warning: Run of {bench} timed out.')

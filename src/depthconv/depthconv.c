@@ -660,7 +660,7 @@ void warm_caches(int heat)
 
 int benchmark(void)
 {
-    return benchmark_body(LOCAL_SCALE_FACTOR * CPU_MHZ);
+    return benchmark_body(1);
 }
 
 static int __attribute__((noinline)) benchmark_body(int rpt)

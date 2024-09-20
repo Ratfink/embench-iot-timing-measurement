@@ -477,7 +477,7 @@ warm_caches (int heat)
 int
 benchmark (void)
 {
-  return benchmark_body (LOCAL_SCALE_FACTOR * CPU_MHZ);
+  return benchmark_body (1);
 }
 
 
@@ -490,7 +490,7 @@ static int __attribute__ ((noinline)) benchmark_body (int rpt)
       init_heap_beebs ((void *) heap, HEAP_SIZE);
 
       // initialization
-      memcpy (test_data, orig_data, TEST_SIZE * sizeof (orig_data[0]));
+      //memcpy (test_data, orig_data, TEST_SIZE * sizeof (orig_data[0]));
 
       // what we're timing
       compdecomp (test_data, TEST_SIZE);

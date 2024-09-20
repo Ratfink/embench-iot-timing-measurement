@@ -26,9 +26,11 @@ main (int argc __attribute__ ((unused)),
   initialise_benchmark ();
   warm_caches (WARMUP_HEAT);
 
-  start_trigger ();
-  result = benchmark ();
-  stop_trigger ();
+  while (1) {
+    start_trigger ();
+    result = benchmark ();
+    stop_trigger ();
+  }
 
   /* bmarks that use arrays will check a global array rather than int result */
 

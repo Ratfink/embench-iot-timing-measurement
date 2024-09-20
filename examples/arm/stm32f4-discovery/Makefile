@@ -1,4 +1,4 @@
-CFLAGS = -static -mcpu=cortex-m4 -mthumb -I./Include -DSTM32F407xx -O2
+CFLAGS = -g -static -mcpu=cortex-m4 -mthumb -I./Include -DSTM32F407xx -O2
 .PHONY: clean
 
 libstartup.a: startup.out system.out

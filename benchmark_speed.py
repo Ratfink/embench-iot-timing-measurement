@@ -139,6 +139,12 @@ def get_common_args():
         default=None,
         help='Optional file extension to append to bench mark names when searching for binaries.'
     )
+    parser.add_argument(
+        '--benchmark-name',
+        type=str,
+        required=True,
+        help='Name of the benchmark to run'
+    )
 
     return parser.parse_known_args()
 
@@ -340,8 +346,9 @@ def main():
     validate_args(args)
 
     # Find the benchmarks
-    benchmarks = find_benchmarks()
-    log_benchmarks(benchmarks)
+    find_benchmarks()
+    benchmarks = [args.benchmark_name]
+    #log_benchmarks(benchmarks)
 
     # Collect the speed data for the benchmarks. Pass any remaining args.
     raw_data, rel_data = collect_data(benchmarks, remnant)
@@ -351,15 +358,15 @@ def main():
     # as we collect the data, but it is clearer to do the three things
     # separately. Given the size of datasets with which we are concerned the
     # compute overhead is not significant.
-    if raw_data:
-        if gp['output_format'] != output_format.BASELINE:
-            opt_comma = ',' if args.json_comma else ''
-            embench_stats(benchmarks, raw_data, rel_data, 'speed', opt_comma)
-            if gp['output_format'] == output_format.JSON: log.info('}')
-            else: log.info('All benchmarks run successfully')
-    else:
-        log.info('ERROR: Failed to compute speed benchmarks')
-        sys.exit(1)
+    #if raw_data:
+    #    if gp['output_format'] != output_format.BASELINE:
+    #        opt_comma = ',' if args.json_comma else ''
+    #        embench_stats(benchmarks, raw_data, rel_data, 'speed', opt_comma)
+    #        if gp['output_format'] == output_format.JSON: log.info('}')
+    #        else: log.info('All benchmarks run successfully')
+    #else:
+    #    log.info('ERROR: Failed to compute speed benchmarks')
+    #    sys.exit(1)
 
 
 # Make sure we have new enough Python and only run if this is the main package
