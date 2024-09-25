@@ -91,7 +91,7 @@ def build_benchmark_cmd(path, args):
         f'file {path}',
         'target extended-remote :3333',
         'load',
-        f'time-function {args.benchmark_iters} {args.output_filename} {args.output_extra}',
+        f'time-function {args.benchmark_iters} {args.output_filename} {args.output_opts}',
         'quit',
     ]
 
